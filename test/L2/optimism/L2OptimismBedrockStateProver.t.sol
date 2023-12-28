@@ -2,7 +2,8 @@
 pragma solidity ^0.8.13;
 
 import "forge-std/Test.sol";
-import "./../../../src/L2/optimism/L2OptimismBedrockStateProver.sol";
+import {L2OptimismBedrockStateProver as prover} from "./../../../src/L2/optimism/L2OptimismBedrockStateProver.sol";
+import {Types} from "../../../src/library/optimism/Types.sol";
 import "./../../mocks/MockLightClient.sol";
 import {RLPReader} from "Solidity-RLP/RLPReader.sol";
 
@@ -10,22 +11,24 @@ contract L2OptimismBedrockStateProverTest is Test {
     using RLPReader for bytes;
     using RLPReader for RLPReader.RLPItem;
 
-    L2OptimismBedrockStateProver public prover;
+    // L2OptimismBedrockStateProver public prover;
     MockLightClient public lightClient;
+    address oracleAddress = 0xE6Dfba0953616Bacab0c9A8ecb3a9BBa77FC15c0;
 
     function setUp() public {
         lightClient = new MockLightClient(address(this));
-        prover = new L2OptimismBedrockStateProver(
-            address(lightClient),
-            0xE6Dfba0953616Bacab0c9A8ecb3a9BBa77FC15c0
-        );
+        // prover = new L2OptimismBedrockStateProver(
+        //     address(lightClient),
+        //     oracleAddress
+        // );
     }
 
     function testProve() public {
         uint64 l1BlockNumber = 0x81d27c;
-        bytes32 l1StateRoot = 0x93a4bba104dd231938d1a73c809bf8615e954902ee2ba4e7ac5c05928c01b115;
+        bytes32 _l1StateRoot = 0x93a4bba104dd231938d1a73c809bf8615e954902ee2ba4e7ac5c05928c01b115;
 
-        lightClient.setStateRoot(l1BlockNumber, l1StateRoot);
+        lightClient.setStateRoot(l1BlockNumber, _l1StateRoot);
+        bytes32 l1StateRoot = lightClient.executionStateRoot(l1BlockNumber);
 
         uint256 l2OutputIndex = 0x0000000000000000000000000000000000000000000000000000000000003396;
         Types.OutputRootProof memory outputProofData = Types.OutputRootProof({
@@ -57,7 +60,8 @@ contract L2OptimismBedrockStateProverTest is Test {
         });
 
         bool inState = prover.proveInOptimismState(
-            l1BlockNumber,
+            l1StateRoot,
+            oracleAddress,
             l2OutputIndex,
             outputProof,
             inclusionProof,

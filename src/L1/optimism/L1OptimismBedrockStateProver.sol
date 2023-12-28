@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.13;
 
-import {OptimismBedrockStateProver} from "./../../library/optimism/OptimismBedrockStateProver.sol";
+import {OptimismBedrockStateProver as Prover} from "./../../library/optimism/OptimismBedrockStateProver.sol";
 import {IOptimismBedrockOutputOracle} from "./IOptimismBedrockOutputOracle.sol";
 import {Types} from "./../../library/optimism/Types.sol";
 
@@ -11,7 +11,7 @@ import {Types} from "./../../library/optimism/Types.sol";
 /// @dev The verification happens in two stages.
 /// @dev Stage 1 is verification that the output root exists inside the Optimism Bedrock Output Oracle
 /// @dev Stage 2 uses the state root inside the output root and performs MPT inclusion proving for data inside
-contract L1OptimismBedrockStateProver is OptimismBedrockStateProver {
+contract L1OptimismBedrockStateProver {
     IOptimismBedrockOutputOracle public immutable outputOracle;
 
     constructor(address bedrockOutputOracle) {
@@ -34,7 +34,7 @@ contract L1OptimismBedrockStateProver is OptimismBedrockStateProver {
         /// @dev See https://github.com/ethereum-optimism/optimism/blob/develop/specs/proposals.md#l2-output-commitment-construction
         bytes32 calculatedOutputRoot = keccak256(
             abi.encode(
-                versionByte,
+                Prover.versionByte,
                 outputProof.stateRoot,
                 outputProof.withdrawalStorageRoot,
                 outputProof.latestBlockhash
@@ -62,7 +62,7 @@ contract L1OptimismBedrockStateProver is OptimismBedrockStateProver {
             "Optimism root state was not found in L1"
         );
         return
-            _proveInOptimismState(
+            Prover._proveInOptimismState(
                 outputProof.stateRoot,
                 inclusionProof.target,
                 inclusionProof.slotPosition,

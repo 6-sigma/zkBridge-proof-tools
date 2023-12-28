@@ -5,7 +5,7 @@ import {CombinedProofVerifier} from "./../../MPT/CombinedProofVerifier.sol";
 
 /// @notice Common functionality for the L1 and L2 Optimism Bedrock State Verifiers
 /// @author Perseverance - LimeChain
-abstract contract OptimismBedrockStateProver is CombinedProofVerifier {
+library OptimismBedrockStateProver {
     /// @dev Current Optimism Bedrock Output Root version_byte.
     /// @dev See https://github.com/ethereum-optimism/optimism/blob/develop/specs/proposals.md#l2-output-commitment-construction
     bytes32 public constant versionByte = bytes32(0);
@@ -19,7 +19,7 @@ abstract contract OptimismBedrockStateProver is CombinedProofVerifier {
         bytes calldata proofsBlob
     ) internal view returns (bool) {
         return
-            this.verifyStateProof(
+            CombinedProofVerifier.verifyStateProof(
                 optimismStateRoot,
                 target,
                 slotPosition,

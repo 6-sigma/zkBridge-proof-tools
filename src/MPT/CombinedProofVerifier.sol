@@ -7,7 +7,7 @@ import {RLPReader} from "Solidity-RLP/RLPReader.sol";
 /// @notice Combined Account and Storage Proofs Verifier
 /// @author Perseverance - LimeChain
 /// @author Inspired from https://github.com/lidofinance/curve-merkle-oracle
-contract CombinedProofVerifier {
+library CombinedProofVerifier {
     using RLPReader for bytes;
     using RLPReader for RLPReader.RLPItem;
 
